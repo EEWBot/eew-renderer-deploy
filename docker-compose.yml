@@ -1,0 +1,64 @@
+services:
+  xvfb:
+    build: ./xvfb
+    hostname: xvfb
+    container_name: eewrenderer__xvfb
+    restart: unless-stopped
+
+    command: Xvfb :1 -listen tcp -ac -screen 0 1024x768x24
+
+    deploy:
+      resources:
+        limits:
+          memory: 128m
+
+    networks:
+      - default
+
+  eewrenderer:
+    image: ghcr.io/eewbot/eew-renderer:latest@sha256:0d2955deaaf925931cdd6aae1e27d5590be12c6107c4c6ec803c3d37799a0f48
+    hostname: eewrenderer
+    container_name: eewrenderer__eewrenderer
+    restart: unless-stopped
+
+    environment:
+      LISTEN: 0.0.0.0:3000
+      DISPLAY: xvfb:1
+      ALLOW_DEMO: ${ALLOW_DEMO}
+      HMAC_KEY: ${HMAC_KEY}
+      INSTANCE_NAME: ${INSTANCE_NAME}
+
+    command: /usr/bin/eew-renderer
+
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+
+    networks:
+      - default
+
+  cloudflared:
+    image: cloudflare/cloudflared:2025.4.0@sha256:522827fe6220249d72ade9a85cf5bdcc52c18ef1d13c7a3bb7480f56a0fd36e6
+    hostname: cloudflared
+    container_name: eewrenderer__cloudflared
+
+    restart: unless-stopped
+
+    environment:
+      TUNNEL_LOGFILE: /dev/stdout
+
+    command: tunnel run --token ${TUNNEL_TOKEN}
+    user: root
+
+    deploy:
+      resources:
+        limits:
+          memory: 128m
+
+    networks:
+      default:
+
+networks:
+  default:
+    name: eewrenderer__default
