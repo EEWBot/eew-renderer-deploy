@@ -8,6 +8,7 @@ services:
     command: Xvfb :1 -listen tcp -ac -screen 0 1024x768x24
 
     deploy:
+      replicas: ${XVFB_REPLICAS:-0}
       resources:
         limits:
           memory: 128m
@@ -23,10 +24,15 @@ services:
 
     environment:
       LISTEN: 0.0.0.0:3000
-      DISPLAY: xvfb:1
+      DISPLAY: ${X_DISPLAY}
       ALLOW_DEMO: ${ALLOW_DEMO}
       HMAC_KEY: ${HMAC_KEY}
       INSTANCE_NAME: ${INSTANCE_NAME}
+
+    volumes:
+      - type: bind
+        source: /tmp/.X11-unix
+        target: /tmp/.X11-unix
 
     command: /usr/bin/eew-renderer
 
