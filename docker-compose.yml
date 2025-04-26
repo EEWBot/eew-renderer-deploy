@@ -20,6 +20,7 @@ services:
     image: ghcr.io/eewbot/eew-renderer:master
     hostname: eewrenderer
     container_name: eewrenderer${VARIANT:-}__eewrenderer
+    privileged: true
     restart: unless-stopped
 
     environment:
