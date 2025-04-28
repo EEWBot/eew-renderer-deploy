@@ -1,0 +1,61 @@
+services:
+  eewrenderer:
+    image: ghcr.io/eewbot/eew-renderer:master
+    hostname: eewrenderer
+    container_name: eewrenderer${VARIANT:-}__eewrenderer
+    restart: unless-stopped
+
+    environment:
+      LISTEN: 0.0.0.0:3000
+      HMAC_KEY: ${HMAC_KEY}
+      INSTANCE_NAME: ${INSTANCE_NAME}
+      ALLOW_DEMO: ${ALLOW_DEMO}
+      DISPLAY: ${DISPLAY}
+      LD_LIBRARY_PATH: /usr/lib/wsl/lib
+
+    volumes:
+      - type: bind
+        source: /tmp/.X11-unix
+        target: /tmp/.X11-unix
+
+      - type: bind
+        source: /usr/lib/wsl
+        target: /usr/lib/wsl
+
+    devices:
+      - /dev/dxg
+
+    command: /usr/bin/eew-renderer
+
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+
+    networks:
+      - default
+
+  cloudflared:
+    image: cloudflare/cloudflared:2025.4.0
+    hostname: cloudflared
+    container_name: eewrenderer${VARIANT:-}__cloudflared
+
+    restart: unless-stopped
+
+    environment:
+      TUNNEL_LOGFILE: /dev/stdout
+
+    command: tunnel run --token ${TUNNEL_TOKEN}
+    user: root
+
+    deploy:
+      resources:
+        limits:
+          memory: 128m
+
+    networks:
+      - default
+
+networks:
+  default:
+    name: eewrenderer${VARIANT:-}__default
