@@ -3,7 +3,7 @@ name: validate compose
 on:
   pull_request:
     paths:
-      - 'docker-compose.yml'
+      - 'docker-compose.*.yml'
       - '.github/workflows/validate-compose.yml'
 
 jobs:
@@ -21,7 +21,7 @@ jobs:
           shopt -s globstar
           set -eux
 
-          for f in **/docker-compose.yml; do
+          for f in docker-compose.*.yml; do
               if ! docker compose --file "$f" config --quiet; then
                   exit 1
               fi
