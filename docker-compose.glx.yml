@@ -1,0 +1,56 @@
+services:
+  eewrenderer:
+    image: ghcr.io/eewbot/eew-renderer:v0.1.0
+    hostname: eewrenderer
+    container_name: eewrenderer${VARIANT:-}__eewrenderer
+    restart: unless-stopped
+
+    environment:
+      LISTEN: 0.0.0.0:3000
+      DISPLAY: ${DISPLAY}
+      ALLOW_DEMO: ${ALLOW_DEMO}
+      HMAC_KEY: ${HMAC_KEY}
+      INSTANCE_NAME: ${INSTANCE_NAME}
+      LIBGL_ALWAYS_INDIRECT: 1
+      __GLX_VENDOR_LIBRARY_NAME: mesa
+      LIBGL_DEBUG: verbose
+      MESA_GL_VERSION_OVERRIDE: 4.5
+      MESA_GLSL_VERSION_OVERRIDE: 440
+
+    command: /usr/bin/eew-renderer
+
+    ports:
+      - 3000:3000
+
+    deploy:
+      resources:
+        limits:
+          memory: 256m
+
+    networks:
+      - default
+
+  # cloudflared:
+  #   image: cloudflare/cloudflared:2025.4.0
+  #   hostname: cloudflared
+  #   container_name: eewrenderer${VARIANT:-}__cloudflared
+  #
+  #   restart: unless-stopped
+  #
+  #   environment:
+  #     TUNNEL_LOGFILE: /dev/stdout
+  #
+  #   command: tunnel run --token ${TUNNEL_TOKEN}
+  #   user: root
+  #
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         memory: 128m
+  #
+  #   networks:
+  #     - default
+
+networks:
+  default:
+    name: eewrenderer${VARIANT:-}__default
