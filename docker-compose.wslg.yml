@@ -11,6 +11,7 @@ services:
       INSTANCE_NAME: ${INSTANCE_NAME}
       ALLOW_DEMO: ${ALLOW_DEMO}
       DISPLAY: ${DISPLAY}
+      MINIMUM_RESPONSE_INTERVAL: ${MINIMUM_RESPONSE_INTERVAL}
       LD_LIBRARY_PATH: /usr/lib/wsl/lib
 
     volumes:

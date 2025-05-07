@@ -27,6 +27,7 @@ services:
       ALLOW_DEMO: ${ALLOW_DEMO}
       HMAC_KEY: ${HMAC_KEY}
       INSTANCE_NAME: ${INSTANCE_NAME}
+      MINIMUM_RESPONSE_INTERVAL: ${MINIMUM_RESPONSE_INTERVAL}
 
     command: /usr/bin/eew-renderer
 
