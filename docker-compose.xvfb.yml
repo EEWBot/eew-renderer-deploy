@@ -7,6 +7,9 @@ services:
 
     command: Xvfb :0 -listen tcp -ac -screen 0 1024x768x24
 
+    tmpfs:
+      - /tmp
+
     deploy:
       resources:
         limits:
@@ -20,9 +23,6 @@ services:
     hostname: eewrenderer
     container_name: eewrenderer${VARIANT:-}__eewrenderer
     restart: unless-stopped
-
-    tmpfs:
-      - /tmp
 
     environment:
       LISTEN: 0.0.0.0:3000
