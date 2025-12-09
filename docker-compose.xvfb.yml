@@ -21,6 +21,9 @@ services:
     container_name: eewrenderer${VARIANT:-}__eewrenderer
     restart: unless-stopped
 
+    tmpfs:
+      - /tmp
+
     environment:
       LISTEN: 0.0.0.0:3000
       DISPLAY: xvfb:0
