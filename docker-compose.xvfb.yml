@@ -19,7 +19,7 @@ services:
       - default
 
   eewrenderer:
-    image: ghcr.io/eewbot/eew-renderer:v0.3.0
+    image: ghcr.io/eewbot/eew-renderer:v0.5.0
     hostname: eewrenderer
     container_name: eewrenderer${VARIANT:-}__eewrenderer
     restart: unless-stopped
