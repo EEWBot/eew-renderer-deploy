@@ -1,36 +1,17 @@
 services:
-  xvfb:
-    build: ./xvfb
-    hostname: xvfb
-    container_name: eewrenderer${VARIANT:-}__xvfb
-    restart: unless-stopped
-
-    command: Xvfb :0 -listen tcp -ac -screen 0 1024x768x24
-
-    tmpfs:
-      - /tmp
-
-    deploy:
-      resources:
-        limits:
-          memory: 128m
-
-    networks:
-      - default
-
   eewrenderer:
-    image: ghcr.io/eewbot/eew-renderer:v0.5.0
+    image: ghcr.io/eewbot/eew-renderer:v0.6.0
     hostname: eewrenderer
     container_name: eewrenderer${VARIANT:-}__eewrenderer
     restart: unless-stopped
 
     environment:
       LISTEN: 0.0.0.0:3000
-      DISPLAY: xvfb:0
-      ALLOW_DEMO: ${ALLOW_DEMO}
       HMAC_KEY: ${HMAC_KEY}
       INSTANCE_NAME: ${INSTANCE_NAME}
-      MINIMUM_RESPONSE_INTERVAL: ${MINIMUM_RESPONSE_INTERVAL}
+      MINIMUM_RESPONSE_INTERVAL: ${MINIMUM_RESPONSE_INTERVAL:-200ms}
+      IMAGE_CACHE_CAPACITY: ${IMAGE_CACHE_CAPACITY:-512}
+      EGL_DEVICE_INDEX: ${EGL_DEVICE_INDEX:-0}
 
     command: /usr/bin/eew-renderer
 
@@ -38,6 +19,11 @@ services:
       resources:
         limits:
           memory: 2g
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [graphics]
 
     networks:
       - default
