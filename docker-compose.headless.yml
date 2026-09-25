@@ -1,22 +1,16 @@
 services:
   eewrenderer:
-    image: ghcr.io/eewbot/eew-renderer:v0.5.0
+    image: ghcr.io/eewbot/eew-renderer:v0.6.0
     hostname: eewrenderer
     container_name: eewrenderer${VARIANT:-}__eewrenderer
     restart: unless-stopped
 
     environment:
       LISTEN: 0.0.0.0:3000
-      DISPLAY: ${DISPLAY}
-      ALLOW_DEMO: ${ALLOW_DEMO}
       HMAC_KEY: ${HMAC_KEY}
       INSTANCE_NAME: ${INSTANCE_NAME}
-      MINIMUM_RESPONSE_INTERVAL: ${MINIMUM_RESPONSE_INTERVAL}
-
-    volumes:
-      - type: bind
-        source: /tmp/.X11-unix
-        target: /tmp/.X11-unix
+      MINIMUM_RESPONSE_INTERVAL: ${MINIMUM_RESPONSE_INTERVAL:-200ms}
+      IMAGE_CACHE_CAPACITY: ${IMAGE_CACHE_CAPACITY:-512}
 
     command: /usr/bin/eew-renderer
 
@@ -24,11 +18,6 @@ services:
       resources:
         limits:
           memory: 2g
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
 
     networks:
       - default

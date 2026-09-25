@@ -1,6 +1,6 @@
 services:
   eewrenderer:
-    image: ghcr.io/eewbot/eew-renderer:v0.5.0
+    image: ghcr.io/eewbot/eew-renderer:v0.6.0
     hostname: eewrenderer
     container_name: eewrenderer${VARIANT:-}__eewrenderer
     restart: unless-stopped
@@ -9,24 +9,18 @@ services:
       LISTEN: 0.0.0.0:3000
       HMAC_KEY: ${HMAC_KEY}
       INSTANCE_NAME: ${INSTANCE_NAME}
-      ALLOW_DEMO: ${ALLOW_DEMO}
-      DISPLAY: ${DISPLAY}
-      MINIMUM_RESPONSE_INTERVAL: ${MINIMUM_RESPONSE_INTERVAL}
+      MINIMUM_RESPONSE_INTERVAL: ${MINIMUM_RESPONSE_INTERVAL:-200ms}
+      IMAGE_CACHE_CAPACITY: ${IMAGE_CACHE_CAPACITY:-512}
       LD_LIBRARY_PATH: /usr/lib/wsl/lib
-
-    volumes:
-      - type: bind
-        source: /tmp/.X11-unix
-        target: /tmp/.X11-unix
-
-      - type: bind
-        source: /usr/lib/wsl
-        target: /usr/lib/wsl
-
-    devices:
-      - /dev/dxg
+      GALLIUM_DRIVER: d3d12
 
     command: /usr/bin/eew-renderer
+
+    devices:
+      - /dev/dxg:/dev/dxg
+
+    volumes:
+      - /usr/lib/wsl:/usr/lib/wsl:ro
 
     deploy:
       resources:
